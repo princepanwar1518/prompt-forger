@@ -1,0 +1,15 @@
+[project]
+name = "prompt-forger-engine"
+version = "1.1.0"
+description = "Prompt generation engine for Prompt Forger (JSON-lines over stdio)."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pyinstaller>=6"]
+
+[project.scripts]
+prompt-forger-engine = "prompt_forger_engine.__main__:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

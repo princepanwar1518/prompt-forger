@@ -1,0 +1,321 @@
+/*
+ * Prompt Forger, "Gumdrop" style: cream paper, black ink, candy accents, pill buttons,
+ * chunky 2px outlines and hard offset shadows (no blur). Dark theme = .root.dark.
+ * Fonts are bundled: Bricolage Grotesque (display), Space Grotesk (UI), DM Mono (labels).
+ */
+
+.root {
+    -pf-bg: #F8F4E9;
+    -pf-bg-2: #EFE8D6;
+    -pf-surface: #FFFDF7;
+    -pf-ink: #17151B;
+    -pf-line: #17151B;
+    -pf-shadow: #17151B;
+    -pf-muted: #6B6575;
+    -pf-lime: #D7FF3F;
+    -pf-violet: #6554F4;
+    -pf-tangerine: #FF713D;
+    -pf-bubblegum: #FF78B7;
+    -pf-chrome: #9C96A8;
+    -pf-on-accent: #17151B;
+    -pf-code-bg: #FFFDF7;
+
+    -fx-font-family: "Space Grotesk";
+    -fx-font-size: 13.5px;
+    -fx-background-color: -pf-bg;
+    -fx-text-fill: -pf-ink;
+    -fx-base: -pf-surface;
+    -fx-accent: -pf-violet;
+    -fx-focus-color: -pf-violet;
+    -fx-faint-focus-color: transparent;
+    -fx-control-inner-background: -pf-surface;
+    -fx-selection-bar: -pf-lime;
+    -fx-selection-bar-text: -pf-ink;
+    -fx-selection-bar-non-focused: -pf-bg-2;
+}
+
+.root.dark, .dialog-pane.dark {
+    -pf-bg: #17151B;
+    -pf-bg-2: #211E27;
+    -pf-surface: #2A2631;
+    -pf-ink: #F8F4E9;
+    -pf-line: #F8F4E9;
+    -pf-shadow: #000000;
+    -pf-muted: #ABA4B8;
+    -pf-code-bg: #1E1B23;
+    -fx-selection-bar-text: #17151B;
+}
+
+/* ---------------------------------------------------------------- type */
+
+.label { -fx-text-fill: -pf-ink; }
+.display { -fx-font-family: "Bricolage Grotesque Display"; -fx-font-size: 30px; -fx-text-fill: -pf-ink; }
+.display-xl { -fx-font-family: "Bricolage Grotesque Display"; -fx-font-size: 54px; -fx-text-fill: -pf-ink; }
+.mono, .eyebrow { -fx-font-family: "DM Mono"; }
+.eyebrow { -fx-font-size: 11px; -fx-text-fill: -pf-muted; }
+.hint { -fx-text-fill: -pf-muted; -fx-font-size: 12px; }
+.error-text { -fx-text-fill: -pf-tangerine; -fx-font-family: "Space Grotesk SemiBold"; -fx-font-size: 12px; }
+
+/* ---------------------------------------------------------------- inputs */
+
+.text-field, .text-area, .combo-box, .password-field {
+    -fx-background-color: -pf-line, -pf-surface;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 14, 12;
+    -fx-text-fill: -pf-ink;
+    -fx-prompt-text-fill: -pf-chrome;
+    -fx-highlight-fill: -pf-lime;
+    -fx-highlight-text-fill: #17151B;
+}
+.text-field, .password-field { -fx-padding: 9 12; }
+.text-area { -fx-padding: 3; }
+.text-area .content { -fx-background-color: -pf-surface; -fx-background-radius: 12; -fx-padding: 6 9; }
+.text-field:focused, .text-area:focused, .combo-box:focused, .password-field:focused {
+    -fx-background-color: -pf-violet, -pf-surface;
+    -fx-background-insets: 0, 2.5;
+    -fx-effect: dropshadow(one-pass-box, -pf-shadow, 0, 1, 3, 3);
+}
+.text-field.invalid, .text-area.invalid { -fx-background-color: -pf-tangerine, -pf-surface; -fx-background-insets: 0, 2.5; }
+.text-field:disabled { -fx-opacity: 0.45; }
+.combo-box { -fx-padding: 4 6; }
+.combo-box .list-cell { -fx-text-fill: -pf-ink; -fx-background-color: transparent; }
+.combo-box .arrow { -fx-background-color: -pf-ink; }
+.combo-box-popup .list-view, .context-menu {
+    -fx-background-color: -pf-line, -pf-surface;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 14, 12;
+    -fx-padding: 4;
+    -fx-effect: dropshadow(one-pass-box, -pf-shadow, 0, 1, 4, 5);
+}
+.combo-box-popup .list-cell { -fx-background-color: transparent; -fx-text-fill: -pf-ink; -fx-padding: 7 12; -fx-background-radius: 10; }
+.combo-box-popup .list-cell:hover, .combo-box-popup .list-cell:selected { -fx-background-color: -pf-lime; -fx-text-fill: #17151B; }
+.menu-item { -fx-background-radius: 10; -fx-padding: 7 12; }
+.menu-item .label { -fx-text-fill: -pf-ink; }
+.menu-item:focused { -fx-background-color: -pf-lime; }
+.menu-item:focused .label { -fx-text-fill: #17151B; }
+.radio-menu-item:checked .radio { -fx-background-color: -pf-violet; }
+
+/* ---------------------------------------------------------------- buttons: pills with hard shadows */
+
+.button, .toggle-button, .menu-button {
+    -fx-background-color: -pf-line, -pf-surface;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 100;
+    -fx-text-fill: -pf-ink;
+    -fx-font-family: "Space Grotesk SemiBold";
+    -fx-padding: 8 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(one-pass-box, -pf-shadow, 0, 1, 3, 3);
+}
+.button:hover, .toggle-button:hover, .menu-button:hover { -fx-translate-x: -1; -fx-translate-y: -1; -fx-effect: dropshadow(one-pass-box, -pf-shadow, 0, 1, 4, 5); }
+.button:pressed, .toggle-button:pressed { -fx-translate-x: 2; -fx-translate-y: 2; -fx-effect: null; }
+.button:focused, .toggle-button:focused, .menu-button:focused { -fx-background-color: -pf-violet, -pf-surface; -fx-background-insets: 0, 2.5; }
+.button:disabled { -fx-opacity: 0.4; -fx-effect: null; }
+.menu-button .arrow { -fx-background-color: -pf-ink; }
+
+.button.primary { -fx-background-color: -pf-line, -pf-lime; -fx-text-fill: #17151B; }
+.button.ink { -fx-background-color: -pf-line, #17151B; -fx-text-fill: -pf-lime; }
+.root.dark .button.ink { -fx-background-color: -pf-line, -pf-lime; -fx-text-fill: #17151B; }
+.button.violet { -fx-background-color: -pf-line, -pf-violet; -fx-text-fill: #FFFFFF; }
+.button.ghost { -fx-background-color: transparent; -fx-effect: null; -fx-text-fill: -pf-muted; -fx-padding: 6 10; }
+.button.ghost:hover { -fx-text-fill: -pf-tangerine; -fx-translate-x: 0; -fx-translate-y: 0; -fx-effect: null; }
+
+.tooltip {
+    -fx-background-color: #17151B;
+    -fx-text-fill: #F8F4E9;
+    -fx-background-radius: 10;
+    -fx-font-family: "DM Mono";
+    -fx-font-size: 11.5px;
+    -fx-padding: 6 9;
+}
+
+/* ---------------------------------------------------------------- scroll */
+
+.scroll-pane, .scroll-pane > .viewport { -fx-background-color: transparent; }
+.scroll-bar { -fx-background-color: transparent; }
+.scroll-bar .thumb { -fx-background-color: -pf-chrome; -fx-background-radius: 6; }
+.scroll-bar .increment-button, .scroll-bar .decrement-button, .scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {
+    -fx-padding: 0; -fx-shape: "";
+}
+.progress-indicator { -fx-progress-color: -pf-violet; }
+
+/* ---------------------------------------------------------------- layout */
+
+.header {
+    -fx-background-color: -pf-bg;
+    -fx-border-color: transparent transparent -pf-line transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 12 20;
+}
+.wordmark { -fx-font-family: "Bricolage Grotesque Display"; -fx-font-size: 24px; -fx-text-fill: -pf-ink; }
+.wordmark-dot { -fx-background-color: -pf-line, -pf-lime; -fx-background-insets: 0, 2; -fx-background-radius: 100; -fx-min-width: 22; -fx-min-height: 22; -fx-max-width: 22; -fx-max-height: 22; }
+.version-pill {
+    -fx-background-color: -pf-violet; -fx-background-radius: 100; -fx-text-fill: white;
+    -fx-font-family: "DM Mono"; -fx-font-size: 10.5px; -fx-padding: 2 8;
+}
+
+.main-split { -fx-background-color: -pf-bg; -fx-padding: 0; -fx-box-border: transparent; }
+.main-split > .split-pane-divider { -fx-background-color: -pf-line; -fx-padding: 0 1 0 1; }
+
+/* ---------------------------------------------------------------- cards */
+
+.card {
+    -fx-background-color: -pf-line, -pf-surface;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 26, 24;
+    -fx-padding: 18 20;
+    -fx-effect: dropshadow(one-pass-box, -pf-shadow, 0, 1, 5, 6);
+}
+.card.lime { -fx-background-color: -pf-line, -pf-lime; }
+.card.lime .label, .card.lime .hint, .card.lime .eyebrow { -fx-text-fill: #17151B; }
+.card.lime .text-area, .card.lime .text-field, .card.lime .combo-box { -fx-background-color: #17151B, #FFFDF7; }
+.card.lime .text-area .content { -fx-background-color: #FFFDF7; }
+.card.lime .text-area { -fx-text-fill: #17151B; }
+.card.lime .combo-box .list-cell { -fx-text-fill: #17151B; }
+.card.lime .combo-box .arrow { -fx-background-color: #17151B; }
+.card.violet { -fx-background-color: -pf-line, -pf-violet; }
+.card.violet .label { -fx-text-fill: white; }
+.card.flat { -fx-effect: null; }
+
+.section-title { -fx-font-family: "Bricolage Grotesque Display"; -fx-font-size: 22px; -fx-text-fill: -pf-ink; }
+.card-title { -fx-font-family: "Bricolage Grotesque Bold"; -fx-font-size: 18px; -fx-text-fill: -pf-ink; }
+
+/* ---------------------------------------------------------------- form */
+
+.form { -fx-background-color: -pf-bg; }
+.field { -fx-spacing: 6; }
+.field-label { -fx-font-family: "Space Grotesk Bold"; -fx-font-size: 13.5px; }
+.badge {
+    -fx-background-color: -pf-bg-2;
+    -fx-background-radius: 100;
+    -fx-text-fill: -pf-muted;
+    -fx-font-family: "DM Mono";
+    -fx-font-size: 10px;
+    -fx-padding: 1 8;
+}
+.counter { -fx-text-fill: -pf-muted; -fx-font-family: "DM Mono"; -fx-font-size: 10.5px; }
+.counter-over { -fx-text-fill: -pf-tangerine; }
+
+.format-card {
+    -fx-alignment: top-left;
+    -fx-padding: 12 14;
+    -fx-background-radius: 20, 18;
+}
+.format-card:selected { -fx-background-color: -pf-line, -pf-lime; -fx-translate-x: -1; -fx-translate-y: -1; -fx-effect: dropshadow(one-pass-box, -pf-shadow, 0, 1, 4, 5); }
+.format-card:selected .card-hint, .format-card:selected .format-title, .format-card:selected .format-num { -fx-text-fill: #17151B; }
+.format-num { -fx-font-family: "DM Mono"; -fx-font-size: 10.5px; -fx-text-fill: -pf-muted; }
+.format-title { -fx-font-family: "Space Grotesk Bold"; -fx-font-size: 14px; -fx-text-fill: -pf-ink; }
+.card-hint { -fx-text-fill: -pf-muted; -fx-font-size: 11.5px; }
+
+.segmented { -fx-spacing: 8; }
+.segmented > .toggle-button:selected { -fx-background-color: -pf-line, #17151B; -fx-text-fill: -pf-lime; }
+.root.dark .segmented > .toggle-button:selected { -fx-background-color: -pf-line, -pf-lime; -fx-text-fill: #17151B; }
+
+.titled-pane { -fx-text-fill: -pf-ink; }
+.titled-pane > .title {
+    -fx-background-color: -pf-line, -pf-bg-2;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 16, 14;
+    -fx-padding: 10 14;
+    -fx-font-family: "Space Grotesk Bold";
+    -fx-cursor: hand;
+}
+.titled-pane > .title > .arrow-button > .arrow { -fx-background-color: -pf-ink; }
+.titled-pane > .content { -fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 14 2 2 2; }
+
+/* ---------------------------------------------------------------- describe it */
+
+.describe-title { -fx-font-family: "Bricolage Grotesque Display"; -fx-font-size: 26px; -fx-text-fill: #17151B; }
+.describe-status { -fx-font-family: "DM Mono"; -fx-font-size: 11px; -fx-text-fill: #17151B; }
+
+/* ---------------------------------------------------------------- output */
+
+.output { -fx-background-color: -pf-bg-2; -fx-padding: 18 22 22 22; }
+.stats { -fx-text-fill: -pf-muted; -fx-font-family: "DM Mono"; -fx-font-size: 11px; }
+.file-description { -fx-text-fill: -pf-muted; -fx-font-size: 12px; }
+
+.score-number { -fx-font-family: "Bricolage Grotesque Display"; -fx-font-size: 46px; -fx-text-fill: -pf-ink; }
+.score-of { -fx-font-family: "DM Mono"; -fx-font-size: 12px; -fx-text-fill: -pf-muted; }
+.grade-pill {
+    -fx-background-radius: 100; -fx-padding: 3 12;
+    -fx-font-family: "Space Grotesk Bold"; -fx-font-size: 12px;
+    -fx-border-color: -pf-line; -fx-border-width: 2; -fx-border-radius: 100;
+}
+.grade-excellent { -fx-background-color: -pf-lime; -fx-text-fill: #17151B; }
+.grade-good { -fx-background-color: -pf-violet; -fx-text-fill: white; }
+.grade-needs-work { -fx-background-color: -pf-tangerine; -fx-text-fill: #17151B; }
+.grade-weak { -fx-background-color: -pf-bubblegum; -fx-text-fill: #17151B; }
+.finding { -fx-font-size: 12.5px; -fx-text-fill: -pf-ink; }
+.finding-dot { -fx-min-width: 10; -fx-min-height: 10; -fx-max-width: 10; -fx-max-height: 10; -fx-background-radius: 100; }
+.finding-warning { -fx-background-color: -pf-tangerine; }
+.finding-tip { -fx-background-color: -pf-violet; }
+.explanation { -fx-font-size: 13.5px; -fx-text-fill: -pf-ink; -fx-line-spacing: 3; }
+
+.warning {
+    -fx-background-color: -pf-line, -pf-bubblegum;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 14, 12;
+    -fx-text-fill: #17151B;
+    -fx-padding: 9 12;
+    -fx-max-width: infinity;
+}
+
+.tab-pane > .tab-header-area { -fx-padding: 0 0 8 0; }
+.tab-pane > .tab-header-area > .tab-header-background { -fx-background-color: transparent; }
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: -pf-line, -pf-surface;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 100;
+    -fx-padding: 5 14;
+    -fx-cursor: hand;
+}
+.tab-pane > .tab-header-area > .headers-region > .tab .tab-label { -fx-text-fill: -pf-ink; -fx-font-family: "DM Mono"; -fx-font-size: 12px; }
+.tab-pane > .tab-header-area > .headers-region > .tab:selected { -fx-background-color: -pf-line, #17151B; }
+.tab-pane > .tab-header-area > .headers-region > .tab:selected .tab-label { -fx-text-fill: -pf-lime; }
+.root.dark .tab-pane > .tab-header-area > .headers-region > .tab:selected { -fx-background-color: -pf-line, -pf-lime; }
+.root.dark .tab-pane > .tab-header-area > .headers-region > .tab:selected .tab-label { -fx-text-fill: #17151B; }
+.tab-pane > .tab-header-area > .headers-region > .tab:selected .focus-indicator { -fx-border-color: transparent; }
+.tab-pane > .tab-content-area { -fx-background-color: transparent; -fx-padding: 0; }
+
+.text-area.code {
+    -fx-font-family: "DM Mono";
+    -fx-font-size: 12.5px;
+    -fx-background-color: -pf-line, -pf-code-bg;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 20, 18;
+    -fx-effect: dropshadow(one-pass-box, -pf-shadow, 0, 1, 5, 6);
+}
+.text-area.code .content { -fx-background-color: -pf-code-bg; -fx-background-radius: 18; -fx-padding: 14 16; }
+
+.empty-state { -fx-padding: 40; }
+.empty-title { -fx-font-family: "Bricolage Grotesque Display"; -fx-font-size: 34px; -fx-text-fill: -pf-ink; }
+.empty-body { -fx-text-fill: -pf-muted; -fx-text-alignment: center; }
+.error-state .empty-title { -fx-text-fill: -pf-tangerine; }
+
+/* ---------------------------------------------------------------- toast */
+
+.toast-layer { -fx-padding: 0 0 26 0; }
+.toast {
+    -fx-background-color: -pf-line, #17151B;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 100;
+    -fx-padding: 10 20;
+    -fx-text-fill: -pf-lime;
+    -fx-font-family: "Space Grotesk Bold";
+    -fx-effect: dropshadow(one-pass-box, -pf-shadow, 0, 1, 4, 5);
+}
+.toast-success { -fx-text-fill: -pf-lime; }
+.toast-info { -fx-text-fill: #F8F4E9; }
+.toast-error { -fx-background-color: -pf-line, -pf-tangerine; -fx-text-fill: #17151B; }
+
+/* ---------------------------------------------------------------- dialogs */
+
+.dialog-pane { -fx-background-color: -pf-bg; -fx-padding: 6; }
+.dialog-pane > .header-panel { -fx-background-color: -pf-lime; -fx-padding: 16 20; }
+.dialog-pane > .header-panel .label { -fx-text-fill: #17151B; -fx-font-family: "Bricolage Grotesque Bold"; -fx-font-size: 18px; }
+.dialog-pane .label { -fx-text-fill: -pf-ink; }
+.dialog-pane > .content { -fx-padding: 16 20; }
+.dialog-pane > .button-bar > .container { -fx-padding: 8 16 14 16; }
+
+/* toggle buttons outside segmented groups (e.g. Plain English) */
+.toggle-button:selected { -fx-background-color: -pf-line, -pf-lime; -fx-text-fill: #17151B; }
