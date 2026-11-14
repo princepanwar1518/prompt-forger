@@ -2,6 +2,8 @@
 
 **Download v1.2.0:** installers for Windows and macOS are in [`releases/v1.2.0`](releases/v1.2.0). Older: [`v1.1.0`](releases/v1.1.0).
 
+**Web app:** the same engine runs in the browser. See [`web/`](web/) for the Next.js site hosted on Vercel.
+
 A Windows desktop app that forges structured prompts for AI models.
 
 - **UI:** Java 21 + JavaFX

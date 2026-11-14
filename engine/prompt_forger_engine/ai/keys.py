@@ -11,6 +11,9 @@ import os
 import re
 import subprocess
 import sys
+from contextlib import contextmanager
+from contextvars import ContextVar
+from typing import Iterator
 from pathlib import Path
 
 PROVIDERS = ("anthropic", "openai")
@@ -22,6 +25,20 @@ _KEY_RE = re.compile(r"^[A-Za-z0-9_\-.]{16,400}$")
 
 class KeyStoreError(Exception):
     pass
+
+
+# Web host only: a key supplied with one request, used for that request and never stored.
+_REQUEST_KEYS: ContextVar[dict[str, str] | None] = ContextVar("pf_request_keys", default=None)
+
+
+@contextmanager
+def request_key(provider: str, key: str) -> Iterator[None]:
+    """Use ``key`` for ``provider`` during this request only (no keychain, no disk)."""
+    token = _REQUEST_KEYS.set({provider: validate_key(provider, key)})
+    try:
+        yield
+    finally:
+        _REQUEST_KEYS.reset(token)
 
 
 def validate_key(provider: str, key: str) -> str:
@@ -183,6 +200,9 @@ def set_key(provider: str, key: str) -> None:
 def get_key(provider: str) -> str | None:
     if provider not in PROVIDERS:
         return None
+    scoped = (_REQUEST_KEYS.get() or {}).get(provider)
+    if scoped:
+        return scoped
     env = os.environ.get(f"PROMPT_FORGER_{provider.upper()}_KEY")
     if env:
         return env.strip()
