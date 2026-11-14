@@ -1,6 +1,6 @@
 # Prompt Forger
 
-**Download v1.1.0:** installers for Windows and macOS are in [`releases/v1.1.0`](releases/v1.1.0).
+**Download v1.2.0:** installers for Windows and macOS are in [`releases/v1.2.0`](releases/v1.2.0). Older: [`v1.1.0`](releases/v1.1.0).
 
 A Windows desktop app that forges structured prompts for AI models.
 

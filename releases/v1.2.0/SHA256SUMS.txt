@@ -1,0 +1,4 @@
+1358851cce217f4962a0cbc185a48e2ac043aca7cea4220fce7d9606fad37cd7  PromptForger-1.2.0-mac-arm64.zip
+7097833f3d06defe5bdc45dbad6a1cb0b1ac9b27ec68565886c4b18e48877faa  PromptForger-1.2.0-mac-x64.zip
+633c8b74f4bc0f35d7de059228987c3569ab437ea5b8d8eebd376e8a4fa998c8  PromptForger-1.2.0-windows-portable.zip
+78fb89b245ce5a5da03129f8862d6785455c4a5c2ef9f9aaa872e52924c86afc  PromptForger-Setup-1.2.0.exe
