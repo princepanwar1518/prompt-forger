@@ -1,5 +1,7 @@
 # Prompt Forger
 
+**Download v1.1.0:** installers for Windows and macOS are in [`releases/v1.1.0`](releases/v1.1.0).
+
 A Windows desktop app that forges structured prompts for AI models.
 
 - **UI:** Java 21 + JavaFX
