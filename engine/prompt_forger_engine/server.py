@@ -20,6 +20,7 @@ from typing import Any, Callable, TextIO
 from . import __version__
 from .ai import keys
 from .ai.describe import describe
+from .ai.improve import enhance, rate
 from .ai.providers import ProviderError
 from .ai.run import exact_tokens, run_prompt
 from .forge import forge, meta
@@ -51,6 +52,8 @@ SLOW: dict[str, Callable[[Any], Any]] = {
     "describe": describe,
     "run": run_prompt,
     "tokens": exact_tokens,
+    "enhance": enhance,
+    "rate": rate,
 }
 
 

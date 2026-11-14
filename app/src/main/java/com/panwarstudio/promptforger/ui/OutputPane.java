@@ -38,6 +38,8 @@ final class OutputPane extends BorderPane {
         void test(ForgeFile file);
 
         void focusField(String field);
+
+        void enhance();
     }
 
     private static final int MAX_FINDINGS_SHOWN = 4;
@@ -55,6 +57,8 @@ final class OutputPane extends BorderPane {
     private final Label scoreNumber = new Label();
     private final Label grade = new Label();
     private final VBox findingsBox = new VBox(7);
+    private final VBox dimensionsBox = new VBox(6);
+    private final Button enhance = new Button("✦ Enhance");
     private final HBox qualityCard;
     private final Label explanation = new Label();
     private final VBox explanationCard;
@@ -110,13 +114,19 @@ final class OutputPane extends BorderPane {
         qualityEyebrow.getStyleClass().add("eyebrow");
         HBox scoreRow = new HBox(6, scoreNumber, scoreOf);
         scoreRow.setAlignment(Pos.BASELINE_LEFT);
-        VBox scoreBox = new VBox(2, qualityEyebrow, scoreRow, grade);
-        scoreBox.setMinWidth(130);
+        enhance.getStyleClass().add("ink");
+        enhance.setMinWidth(Region.USE_PREF_SIZE);
+        enhance.setTooltip(new Tooltip("Fix what the checker found. With an AI provider, it also rewrites the prompt. You review before applying."));
+        enhance.setOnAction(e -> actions.enhance());
+        VBox scoreBox = new VBox(4, qualityEyebrow, scoreRow, grade, new Region(), enhance);
+        scoreBox.setMinWidth(140);
+        dimensionsBox.setMinWidth(170);
+        dimensionsBox.setPrefWidth(190);
         findingsBox.setFillWidth(true);
         HBox.setHgrow(findingsBox, Priority.ALWAYS);
-        qualityCard = new HBox(22, scoreBox, findingsBox);
+        qualityCard = new HBox(20, scoreBox, dimensionsBox, findingsBox);
         qualityCard.getStyleClass().add("card");
-        qualityCard.setAlignment(Pos.CENTER_LEFT);
+        qualityCard.setAlignment(Pos.TOP_LEFT);
 
         Label explainEyebrow = new Label("IN PLAIN ENGLISH");
         explainEyebrow.getStyleClass().add("eyebrow");
@@ -229,6 +239,10 @@ final class OutputPane extends BorderPane {
         grade.getStyleClass().removeIf(c -> c.startsWith("grade-") && !c.equals("grade-pill"));
         grade.getStyleClass().add("grade-" + q.grade().toLowerCase(Locale.ROOT).replace(' ', '-'));
 
+        dimensionsBox.getChildren().clear();
+        for (ForgeResult.Dimension d : q.dimensions()) dimensionsBox.getChildren().add(dimensionRow(d));
+        show(dimensionsBox, !q.dimensions().isEmpty());
+
         findingsBox.getChildren().clear();
         if (q.findings().isEmpty()) {
             Label ok = new Label("Nothing to fix. This prompt is specific, checkable and well-shaped.");
@@ -249,6 +263,23 @@ final class OutputPane extends BorderPane {
             }
         }
         show(qualityCard, true);
+    }
+
+    private static Node dimensionRow(ForgeResult.Dimension d) {
+        Label name = new Label(d.name());
+        name.getStyleClass().add("dim-name");
+        Label value = new Label(String.valueOf(d.score()));
+        value.getStyleClass().add("dim-value");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox head = new HBox(name, spacer, value);
+        javafx.scene.control.ProgressBar bar = new javafx.scene.control.ProgressBar(d.score() / 100.0);
+        bar.setMaxWidth(Double.MAX_VALUE);
+        bar.getStyleClass().addAll("dim-bar", d.score() >= 85 ? "dim-high" : d.score() >= 60 ? "dim-mid" : "dim-low");
+        bar.setAccessibleText(d.name() + " " + d.score() + " out of 100");
+        VBox row = new VBox(2, head, bar);
+        Tooltip.install(row, new Tooltip(d.hint()));
+        return row;
     }
 
     private Node findingRow(ForgeResult.Finding f) {

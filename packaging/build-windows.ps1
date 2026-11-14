@@ -25,7 +25,7 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$Version   = '1.1.0'
+$Version   = '1.2.0'
 $AppName   = 'PromptForger'
 $Module    = 'com.panwarstudio.promptforger'
 $MainClass = 'com.panwarstudio.promptforger.App'

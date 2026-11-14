@@ -14,9 +14,12 @@ public sealed interface ForgeResult {
         }
     }
 
-    record Quality(int score, String grade, List<Finding> findings) {
+    record Dimension(String name, int score, String hint) {}
+
+    record Quality(int score, String grade, List<Finding> findings, List<Dimension> dimensions) {
         public Quality {
             findings = List.copyOf(findings);
+            dimensions = List.copyOf(dimensions);
         }
     }
 
@@ -40,7 +43,7 @@ public sealed interface ForgeResult {
         if (Boolean.TRUE.equals(m.get("ok"))) {
             List<ForgeFile> files = Json.asList(m.get("files"), "files").stream().map(ForgeFile::fromJson).toList();
             List<String> warnings = strings(m.get("warnings"));
-            Quality quality = new Quality(100, "Excellent", List.of());
+            Quality quality = new Quality(100, "Excellent", List.of(), List.of());
             if (m.get("quality") instanceof Map<?, ?> q) {
                 Map<String, Object> qm = Json.asObject(q, "quality");
                 int score = qm.get("score") instanceof Long l ? l.intValue() : 0;
@@ -49,7 +52,12 @@ public sealed interface ForgeResult {
                         .map(f -> new Finding(Json.optString(f, "level", "tip"), Json.optString(f, "field", ""),
                                 Json.optString(f, "message", "")))
                         .toList();
-                quality = new Quality(score, Json.optString(qm, "grade", ""), findings);
+                List<Dimension> dims = Json.asList(qm.get("dimensions"), "dimensions").stream()
+                        .map(d -> Json.asObject(d, "dimension"))
+                        .map(d -> new Dimension(Json.optString(d, "name", ""),
+                                d.get("score") instanceof Long l ? l.intValue() : 0, Json.optString(d, "hint", "")))
+                        .toList();
+                quality = new Quality(score, Json.optString(qm, "grade", ""), findings, dims);
             }
             return new Success(files, warnings, quality, Json.optString(m, "explanation", ""), strings(m.get("variables")));
         }

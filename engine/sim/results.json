@@ -23,8 +23,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 9.08,
-      "forge_ms": 0.31
+      "describe_ms": 10.78,
+      "forge_ms": 0.41
     },
     {
       "persona": "freelancer",
@@ -49,8 +49,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 0.43,
-      "forge_ms": 0.16
+      "describe_ms": 0.41,
+      "forge_ms": 0.15
     },
     {
       "persona": "freelancer",
@@ -78,8 +78,8 @@
         "Make this criterion checkable (a number, a test, a yes/no): \"The plan has measurable targets and a timeline.\"."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.33,
-      "forge_ms": 0.11
+      "describe_ms": 0.3,
+      "forge_ms": 0.17
     },
     {
       "persona": "freelancer",
@@ -105,8 +105,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 0.32,
-      "forge_ms": 0.1
+      "describe_ms": 0.26,
+      "forge_ms": 0.09
     },
     {
       "persona": "freelancer",
@@ -133,7 +133,7 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 0.32,
+      "describe_ms": 0.28,
       "forge_ms": 0.12
     },
     {
@@ -160,8 +160,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 0.41,
-      "forge_ms": 0.16
+      "describe_ms": 0.36,
+      "forge_ms": 0.13
     },
     {
       "persona": "developer",
@@ -188,8 +188,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.27,
-      "forge_ms": 0.11
+      "describe_ms": 0.31,
+      "forge_ms": 0.15
     },
     {
       "persona": "developer",
@@ -216,7 +216,7 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.33,
+      "describe_ms": 0.36,
       "forge_ms": 0.11
     },
     {
@@ -246,8 +246,8 @@
         "No tool list: the subagent can use every tool. Restrict it (e.g. Read, Grep) for safety."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.31,
-      "forge_ms": 0.33
+      "describe_ms": 0.33,
+      "forge_ms": 0.36
     },
     {
       "persona": "developer",
@@ -275,8 +275,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.32,
-      "forge_ms": 0.12
+      "describe_ms": 0.27,
+      "forge_ms": 0.14
     },
     {
       "persona": "student",
@@ -306,8 +306,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.32,
-      "forge_ms": 0.1
+      "describe_ms": 0.46,
+      "forge_ms": 0.22
     },
     {
       "persona": "student",
@@ -336,8 +336,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.28,
-      "forge_ms": 0.1
+      "describe_ms": 0.37,
+      "forge_ms": 0.13
     },
     {
       "persona": "student",
@@ -364,8 +364,8 @@
         "Make this criterion checkable (a number, a test, a yes/no): \"Someone who skips the source still gets the main decisions and numbers.\"."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.29,
-      "forge_ms": 0.09
+      "describe_ms": 0.4,
+      "forge_ms": 0.12
     },
     {
       "persona": "student",
@@ -391,8 +391,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.28,
-      "forge_ms": 0.09
+      "describe_ms": 0.37,
+      "forge_ms": 0.11
     },
     {
       "persona": "student",
@@ -419,8 +419,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.32,
-      "forge_ms": 0.09
+      "describe_ms": 0.51,
+      "forge_ms": 0.14
     },
     {
       "persona": "shop owner",
@@ -445,8 +445,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 0.27,
-      "forge_ms": 0.09
+      "describe_ms": 0.39,
+      "forge_ms": 0.12
     },
     {
       "persona": "shop owner",
@@ -474,8 +474,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.28,
-      "forge_ms": 0.12
+      "describe_ms": 0.45,
+      "forge_ms": 0.14
     },
     {
       "persona": "shop owner",
@@ -504,8 +504,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.24,
-      "forge_ms": 0.1
+      "describe_ms": 0.35,
+      "forge_ms": 0.12
     },
     {
       "persona": "shop owner",
@@ -530,8 +530,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 0.25,
-      "forge_ms": 0.08
+      "describe_ms": 0.41,
+      "forge_ms": 0.11
     },
     {
       "persona": "shop owner",
@@ -559,8 +559,8 @@
         "Step \"Analyse\" is very short. Say what the step produces."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.31,
-      "forge_ms": 0.11
+      "describe_ms": 0.39,
+      "forge_ms": 0.13
     },
     {
       "persona": "marketer",
@@ -588,8 +588,8 @@
         "Make this criterion checkable (a number, a test, a yes/no): \"The plan has measurable targets and a timeline.\"."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.43,
-      "forge_ms": 0.1
+      "describe_ms": 0.42,
+      "forge_ms": 0.11
     },
     {
       "persona": "marketer",
@@ -614,8 +614,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 0.32,
-      "forge_ms": 0.09
+      "describe_ms": 0.35,
+      "forge_ms": 0.1
     },
     {
       "persona": "marketer",
@@ -643,8 +643,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 0.27,
-      "forge_ms": 0.09
+      "describe_ms": 0.43,
+      "forge_ms": 0.11
     },
     {
       "persona": "marketer",
@@ -673,8 +673,8 @@
         "Step \"Analyse\" is very short. Say what the step produces."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.25,
-      "forge_ms": 0.1
+      "describe_ms": 0.34,
+      "forge_ms": 0.13
     },
     {
       "persona": "manager",
@@ -700,8 +700,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 0.28,
-      "forge_ms": 0.1
+      "describe_ms": 0.39,
+      "forge_ms": 0.11
     },
     {
       "persona": "manager",
@@ -732,8 +732,8 @@
         "Make this criterion checkable (a number, a test, a yes/no): \"Someone who skips the source still gets the main decisions and numbers.\"."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.27,
-      "forge_ms": 0.1
+      "describe_ms": 0.34,
+      "forge_ms": 0.11
     },
     {
       "persona": "founder",
@@ -761,8 +761,8 @@
         "Make this criterion checkable (a number, a test, a yes/no): \"The plan has measurable targets and a timeline.\"."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.27,
-      "forge_ms": 0.09
+      "describe_ms": 0.39,
+      "forge_ms": 0.1
     },
     {
       "persona": "founder",
@@ -790,8 +790,8 @@
         "Step \"Analyse\" is very short. Say what the step produces."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.29,
-      "forge_ms": 0.12
+      "describe_ms": 0.36,
+      "forge_ms": 0.13
     },
     {
       "persona": "vague",
@@ -822,8 +822,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.22,
-      "forge_ms": 0.08
+      "describe_ms": 0.31,
+      "forge_ms": 0.09
     },
     {
       "persona": "vague",
@@ -854,8 +854,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.21,
-      "forge_ms": 0.07
+      "describe_ms": 0.27,
+      "forge_ms": 0.09
     },
     {
       "persona": "vague",
@@ -886,8 +886,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.24,
-      "forge_ms": 0.08
+      "describe_ms": 0.38,
+      "forge_ms": 0.09
     },
     {
       "persona": "vague",
@@ -918,7 +918,7 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.31,
+      "describe_ms": 0.29,
       "forge_ms": 0.08
     },
     {
@@ -950,8 +950,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.23,
-      "forge_ms": 0.1
+      "describe_ms": 0.27,
+      "forge_ms": 0.08
     },
     {
       "persona": "developer",
@@ -977,8 +977,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 0.32,
-      "forge_ms": 0.14
+      "describe_ms": 0.46,
+      "forge_ms": 0.18
     },
     {
       "persona": "writer",
@@ -1005,8 +1005,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 0.29,
-      "forge_ms": 0.24
+      "describe_ms": 0.38,
+      "forge_ms": 0.29
     },
     {
       "persona": "edge",
@@ -1033,7 +1033,7 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.31,
+      "describe_ms": 0.39,
       "forge_ms": 0.13
     },
     {
@@ -1060,8 +1060,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 0.32,
-      "forge_ms": 0.11
+      "describe_ms": 0.45,
+      "forge_ms": 0.12
     },
     {
       "persona": "edge",
@@ -1091,8 +1091,8 @@
         "No output format given. Describe the exact shape you want back (sections, JSON, table)."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.22,
-      "forge_ms": 0.07
+      "describe_ms": 0.25,
+      "forge_ms": 0.08
     },
     {
       "persona": "edge",
@@ -1117,8 +1117,8 @@
       "grade": "Excellent",
       "findings": [],
       "explanation_ok": true,
-      "describe_ms": 1.68,
-      "forge_ms": 0.23
+      "describe_ms": 2.39,
+      "forge_ms": 0.25
     },
     {
       "persona": "edge",
@@ -1149,8 +1149,8 @@
         "Unfilled variables: {{project}}, {{language}}. Give them values under Variables."
       ],
       "explanation_ok": true,
-      "describe_ms": 0.26,
-      "forge_ms": 0.13
+      "describe_ms": 0.33,
+      "forge_ms": 0.14
     }
   ],
   "summary": {
@@ -1177,8 +1177,8 @@
       "Weak": 5
     },
     "explanations_ok": "40/40",
-    "describe_ms_p95": 0.43,
-    "forge_ms_p95": 0.24,
+    "describe_ms_p95": 0.51,
+    "forge_ms_p95": 0.29,
     "misses": []
   }
 }

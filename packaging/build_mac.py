@@ -25,7 +25,7 @@ from PIL import Image
 
 APP_NAME = "Prompt Forger"
 BUNDLE_ID = "com.panwarstudio.promptforger"
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 MODULE = "com.panwarstudio.promptforger"
 MAIN = "com.panwarstudio.promptforger.App"
 ROOT = Path(__file__).resolve().parents[1]

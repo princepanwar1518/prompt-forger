@@ -319,3 +319,27 @@
 
 /* toggle buttons outside segmented groups (e.g. Plain English) */
 .toggle-button:selected { -fx-background-color: -pf-line, -pf-lime; -fx-text-fill: #17151B; }
+
+/* ---------------------------------------------------------------- score breakdown */
+.dim-name { -fx-font-family: "DM Mono"; -fx-font-size: 10.5px; -fx-text-fill: -pf-muted; }
+.dim-value { -fx-font-family: "Space Grotesk Bold"; -fx-font-size: 11.5px; }
+.dim-bar { -fx-pref-height: 9; -fx-max-height: 9; }
+.dim-bar > .track { -fx-background-color: -pf-line, -pf-bg-2; -fx-background-insets: 0, 1.5; -fx-background-radius: 100; }
+.dim-bar > .bar { -fx-background-insets: 1.5; -fx-background-radius: 100; -fx-padding: 3; }
+.dim-high > .bar { -fx-background-color: -pf-lime; }
+.dim-mid > .bar { -fx-background-color: -pf-violet; }
+.dim-low > .bar { -fx-background-color: -pf-tangerine; }
+
+/* ---------------------------------------------------------------- enhance + rating dialogs */
+.big-number { -fx-font-family: "Bricolage Grotesque Display"; -fx-font-size: 44px; -fx-text-fill: -pf-ink; }
+.arrow { -fx-font-family: "Bricolage Grotesque Display"; -fx-font-size: 30px; -fx-text-fill: -pf-muted; }
+.change-row { -fx-background-color: -pf-line, -pf-surface; -fx-background-insets: 0, 1.5; -fx-background-radius: 14, 13; -fx-padding: 10 12; }
+.change-field { -fx-font-family: "DM Mono"; -fx-font-size: 11px; -fx-text-fill: -pf-violet; }
+.change-before { -fx-font-family: "DM Mono"; -fx-font-size: 11.5px; -fx-text-fill: -pf-muted; }
+.change-before .text { -fx-strikethrough: true; }
+.change-after { -fx-font-family: "DM Mono"; -fx-font-size: 11.5px; -fx-text-fill: -pf-ink; }
+.check-pass { -fx-text-fill: #1d7a46; -fx-font-family: "Space Grotesk Bold"; }
+.root.dark .check-pass, .dialog-pane.dark .check-pass { -fx-text-fill: -pf-lime; }
+.check-fail { -fx-text-fill: -pf-tangerine; -fx-font-family: "Space Grotesk Bold"; }
+.check-skip { -fx-text-fill: -pf-chrome; -fx-font-family: "Space Grotesk Bold"; }
+.accuracy-card { -fx-background-color: -pf-line, -pf-bg-2; -fx-background-insets: 0, 2; -fx-background-radius: 20, 18; -fx-padding: 14 16; }

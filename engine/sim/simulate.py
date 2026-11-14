@@ -137,3 +137,66 @@ if __name__ == "__main__":
     out = Path(__file__).with_name("results.json")
     out.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
     print(json.dumps(result["summary"], indent=2, ensure_ascii=False))
+
+
+# ---------------------------------------------------------------- v1.2: Enhance + reply rating
+
+def run_v12() -> dict:
+    from prompt_forger_engine.ai.improve import enhance, rate
+
+    deltas, worse, fixes, unchanged_ok = [], [], [], 0
+    for persona, lang, expected, text in SCENARIOS:
+        d = describe({"text": text[:3900], "provider": "rules", "form": dict(DEFAULT_FORM)})
+        try:
+            r = enhance({"form": d["form"]})
+        except Exception as exc:
+            worse.append({"text": text[:60], "error": str(exc)})
+            continue
+        deltas.append(r["after"] - r["before"])
+        fixes.append(len(r["changes"]))
+        if r["after"] < r["before"]:
+            worse.append({"text": text[:60], "before": r["before"], "after": r["after"]})
+        if not r["changes"] and r["before"] >= 90:
+            unchanged_ok += 1
+        # Enhancing twice must not keep changing things.
+        again = enhance({"form": r["form"]})
+        if again["changes"]:
+            worse.append({"text": text[:60], "not_idempotent": [c["field"] for c in again["changes"]]})
+
+    # Rating: a reply that follows the brief vs one that ignores it, for typical briefs.
+    briefs = [
+        ({"role": "writer", "task": "Reminder email", "outputSchema": "Subject: <s>\n\n<body>",
+          "constraints": "Keep it under 120 words.", "tokenBudget": "400"},
+         "Subject: Invoice reminder\n\nHi Asha, a quick reminder that invoice #77 is due Friday. Thanks!",
+         "PAY NOW " * 200),
+        ({"role": "analyst", "task": "Summary", "outputSchema": "## Key points\n## One-line takeaway", "constraints": "", "tokenBudget": ""},
+         "## Key points\n- Revenue up 12%\n## One-line takeaway\nGood quarter.", "Revenue went up a bit, overall fine."),
+        ({"role": "dev", "task": "Return JSON", "outputSchema": '{"status": "", "items": []}', "constraints": "", "tokenBudget": ""},
+         '{"status": "ok", "items": [1, 2]}', "Here are the items: 1, 2. Status ok."),
+        ({"role": "writer", "task": "Tweet", "outputSchema": "", "constraints": "Keep it under 40 words.", "tokenBudget": "100"},
+         "Prompt Forger 1.1 is out: describe what you need, get a great prompt. Try it today!",
+         "Prompt Forger " * 60),
+    ]
+    rating = []
+    for brief, good, bad in briefs:
+        f = {**DEFAULT_FORM, **brief}
+        g, b = rate({"form": f, "reply": good}), rate({"form": f, "reply": bad})
+        rating.append({"brief": brief["task"], "good": g["accuracy"], "bad": b["accuracy"]})
+    return {
+        "enhance": {
+            "scenarios": len(SCENARIOS),
+            "avg_score_gain": round(statistics.mean(deltas), 1),
+            "max_gain": max(deltas),
+            "got_worse_or_unstable": worse,
+            "avg_fixes": round(statistics.mean(fixes), 1),
+            "already_excellent_left_alone": unchanged_ok,
+        },
+        "rating": {
+            "briefs": rating,
+            "good_beats_bad": f"{sum(1 for r in rating if (r['good'] or 0) > (r['bad'] or 0))}/{len(rating)}",
+        },
+    }
+
+
+if __name__ == "__main__" and "--v12" in sys.argv:
+    print(json.dumps(run_v12(), indent=2, ensure_ascii=False))

@@ -1,4 +1,4 @@
-"""Tests for v1.1 features: new fields, variables, tools, checker, explain, Describe it, providers, keys, server."""
+"""Tests for v1.1 and v1.2 features: fields, checker, explain, Describe it, providers, keys, server, enhance, rate."""
 
 import io
 import json
@@ -159,6 +159,18 @@ class _Mock(BaseHTTPRequestHandler):
                   "steps": ["Greet", "State the amount", "Ask for payment by Friday"],
                   "constraints": ["Under 120 words"], "successCriteria": ["Client pays within 7 days"],
                   "outputSchema": "Subject: ...", "format": "standard", "verbosity": "concise", "questions": []}
+        system = body.get("system") or next((m["content"] for m in body.get("messages", []) if m.get("role") == "system"), "")
+        if "strict, fair evaluator" in system:
+            checks = json.loads(next(m["content"] for m in body["messages"] if m["role"] == "user"))["checks"]
+            fields = {"results": [{"id": c["id"], "pass": "legal" not in c["check"].lower(), "reason": "mock judge"}
+                                  for c in checks], "summary": "Mostly meets the brief."}
+        elif "You improve structured AI prompts" in system:
+            fields = {"role": "accounts receivable specialist",
+                      "task": "Write a warm reminder email for invoice #1042, overdue 30 days, asking for payment by Friday.",
+                      "steps": ["Thank the client", "State invoice number and amount", "Ask for payment by Friday"],
+                      "context": "Client is a small shop.", "constraints": ["Under 120 words", "Never threaten legal action"],
+                      "successCriteria": ["Client pays within 7 days", "Amount is stated exactly once"],
+                      "outputSchema": "Subject: <subject>\n\n<body>", "examples": []}
         text = {"ok": json.dumps(fields), "fenced": "```json\n" + json.dumps(fields) + "\n```",
                 "prose": "Sure! " + json.dumps(fields) + " Hope this helps.", "garbage": "I can't do JSON today"
                 }.get(_Mock.mode, json.dumps(fields))
@@ -314,3 +326,93 @@ def test_clarifying_answers_go_to_the_right_fields():
     assert f["successCriteria"].splitlines()[0] == "They pay within 7 days."
     assert r["questions"] == []
     assert forge(f)["quality"]["score"] > 54  # better than the unanswered version
+
+
+
+# ---------------------------------------------------------------- v1.2: dimensions, enhance, rate
+
+from prompt_forger_engine.ai.improve import enhance, rate  # noqa: E402
+from prompt_forger_engine.enhance import enhance_offline  # noqa: E402
+
+WEAK = {**DEFAULT_FORM, "role": "assistant", "task": "Write a payment reminder email to a client whose invoice is overdue.",
+        "context": "The client is a small shop. Never threaten legal action. Keep it warm.",
+        "successCriteria": "Sounds friendly", "tokenBudget": "100", "verbosity": "detailed"}
+
+
+def test_dimensions_point_at_the_weak_area():
+    dims = {d["name"]: d["score"] for d in forge({**BASE, "role": "assistant", "task": "write something good"})["quality"]["dimensions"]}
+    assert set(dims) == {"Clarity", "Specificity", "Structure", "Checkability", "Fit"}
+    assert dims["Clarity"] == min(dims.values()) and dims["Fit"] == 100
+
+
+def test_enhance_offline_fixes_and_never_invents():
+    form, changes, needs_you = enhance_offline(WEAK)
+    fields = {c.field for c in changes}
+    assert {"role", "constraints", "successCriteria", "outputSchema", "tokenBudget"} <= fields
+    assert form["role"] == "professional business writer"
+    assert "Never threaten legal action." in form["constraints"] and "Never" not in form["context"]
+    assert form["successCriteria"] == "Yes/no: Sounds friendly?"
+    assert form["tokenBudget"] == "600"
+    assert form["task"] == WEAK["task"]  # the task itself is never rewritten offline
+
+
+def test_enhance_reports_what_only_the_user_can_fix():
+    _, _, needs_you = enhance_offline({**WEAK, "task": "write something good about {{product}}"})
+    assert any("Vague" in n for n in needs_you) and any("Unfilled" in n for n in needs_you)
+
+
+def test_enhance_offline_improves_score_and_is_idempotent():
+    r = enhance({"form": WEAK})
+    assert r["source"] == "offline" and r["after"] > r["before"]
+    again = enhance({"form": r["form"]})
+    assert again["changes"] == [] and again["after"] == r["after"]
+
+
+def test_enhance_repairs_trailing_comma_json():
+    form, changes, _ = enhance_offline({**BASE, "outputSchema": '{"a": 1, "b": [1, 2,],}'})
+    assert json.loads(form["outputSchema"]) == {"a": 1, "b": [1, 2]}
+
+
+def test_enhance_with_ai_rewrite(mock_ai):
+    keys.set_key("anthropic", "sk-test-0123456789abcdef")
+    r = enhance({"form": WEAK, "provider": "anthropic"})
+    assert r["source"] == "anthropic" and r["after"] >= r["before"]
+    assert "invoice #1042" in r["form"]["task"]
+    assert any(c["field"] == "task" for c in r["changes"])
+
+
+GOOD = ("Subject: Friendly reminder about invoice #1042\n\nHi Priya,\n\nHope the shop is doing well. "
+        "Invoice #1042 for 45,000 was due on 15 October. Could you arrange payment by Friday?\n\nWarm regards,\nPrince")
+BAD = "hey pay us now or we will take legal action. " * 40
+RATED = {**DEFAULT_FORM, "role": "writer", "task": "Write a reminder email.", "outputSchema": "Subject: <subject>\n\n<body>",
+         "constraints": "Keep it under 120 words.\nNever threaten legal action.", "successCriteria": "Sounds friendly",
+         "tokenBudget": "600"}
+
+
+def test_rate_offline_checks_format_and_length():
+    good, bad = rate({"form": RATED, "reply": GOOD}), rate({"form": RATED, "reply": BAD})
+    assert good["accuracy"] == 100 and bad["accuracy"] < 50
+    assert good["judge"] == "offline" and good["checked"] < good["total"]  # judgement calls left unchecked
+    assert all(c["passed"] is None for c in good["checks"] if c["how"] == "offline")
+
+
+def test_rate_json_schema():
+    form = {**RATED, "outputSchema": '{"status": "", "amount": 0}', "constraints": "", "successCriteria": "", "tokenBudget": ""}
+    ok = rate({"form": form, "reply": '```json\n{"status": "due", "amount": 45000}\n```'})
+    missing = rate({"form": form, "reply": '{"status": "due"}'})
+    broken = rate({"form": form, "reply": "status: due"})
+    assert ok["accuracy"] == 100 and missing["accuracy"] == 50 and broken["accuracy"] == 0
+
+
+def test_rate_with_ai_judge(mock_ai):
+    keys.set_key("openai", "sk-test-0123456789abcdef")
+    r = rate({"form": RATED, "reply": GOOD, "provider": "openai"})
+    assert r["judge"] == "openai" and r["checked"] == r["total"]
+    legal = next(c for c in r["checks"] if "legal" in c["item"])
+    assert legal["passed"] is False and legal["how"] == "openai"
+    assert r["summary"] == "Mostly meets the brief."
+
+
+def test_rate_needs_a_reply():
+    with pytest.raises(ProviderError):
+        rate({"form": RATED, "reply": "  "})

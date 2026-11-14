@@ -1,6 +1,6 @@
 ; PromptForger.exe: tiny launcher that starts the bundled Java runtime without a console window.
 Unicode true
-!define APP_VERSION "1.1.0"
+!define APP_VERSION "1.2.0"
 Name "Prompt Forger"
 OutFile "${OUT_DIR}\PromptForger.exe"
 Icon "${ICON}"

@@ -95,6 +95,21 @@ public final class EngineClient implements AutoCloseable {
         return request("tokens", params, AI_TIMEOUT).thenApply(r -> Json.asObject(r, "tokens").get("tokens") instanceof Long l ? l : null);
     }
 
+    /** Enhance: offline fixes, plus an AI rewrite when a provider is chosen. */
+    public CompletableFuture<EnhanceResult> enhance(FormState form, AiSettings ai) {
+        Map<String, Object> params = new LinkedHashMap<>(ai.params(ai.provider()));
+        params.put("form", form.toJson());
+        return request("enhance", params, AI_TIMEOUT).thenApply(EnhanceResult::fromJson);
+    }
+
+    /** Rates an AI reply against the form's success criteria, constraints, output format and budget. */
+    public CompletableFuture<RateResult> rate(FormState form, String reply, AiSettings ai) {
+        Map<String, Object> params = new LinkedHashMap<>(ai.params(ai.provider()));
+        params.put("form", form.toJson());
+        params.put("reply", reply);
+        return request("rate", params, AI_TIMEOUT).thenApply(RateResult::fromJson);
+    }
+
     public CompletableFuture<Map<String, Object>> keyStatus() {
         return request("keys.status", null).thenApply(r -> Json.asObject(r, "keys"));
     }

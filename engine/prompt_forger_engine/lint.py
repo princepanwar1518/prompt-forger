@@ -131,6 +131,39 @@ def check(inp: ForgeInput) -> list[Finding]:
     return f
 
 
+# Each finding counts against one quality dimension, decided by the field it points at.
+DIMENSIONS = ("Clarity", "Specificity", "Structure", "Checkability", "Fit")
+_DIMENSION_OF_FIELD = {
+    "task": "Clarity", "role": "Clarity",
+    "context": "Specificity", "constraints": "Specificity", "variables": "Specificity", "examples": "Specificity",
+    "steps": "Structure", "outputSchema": "Structure",
+    "successCriteria": "Checkability",
+    "tokenBudget": "Fit", "tools": "Fit", "maxIterations": "Fit", "format": "Fit",
+}
+_DIMENSION_PENALTY = {"warning": 35, "tip": 15}
+_DIMENSION_HINT = {
+    "Clarity": "Is it obvious who the AI is and what it must produce?",
+    "Specificity": "Does it give the background, rules and examples the AI can't guess?",
+    "Structure": "Are the steps and the answer's shape spelled out?",
+    "Checkability": "Can you tell, yes or no, whether the result is done?",
+    "Fit": "Do the budget, format and tools suit the job?",
+}
+
+
+def dimension_of(finding: Finding) -> str:
+    return _DIMENSION_OF_FIELD.get(finding.field, "Clarity")
+
+
+def dimensions(inp: ForgeInput, findings: list[Finding]) -> list[dict[str, object]]:
+    """0-100 per dimension, so people see *where* a prompt is weak, not only how weak."""
+    points = {d: 100 for d in DIMENSIONS}
+    for x in findings:
+        points[dimension_of(x)] -= _DIMENSION_PENALTY[x.level]
+    if not inp.context and not inp.constraints and not inp.examples:
+        points["Specificity"] -= 25  # nothing beyond the task itself
+    return [{"name": d, "score": max(0, min(100, points[d])), "hint": _DIMENSION_HINT[d]} for d in DIMENSIONS]
+
+
 def score(findings: list[Finding]) -> int:
     return max(0, 100 - sum(_PENALTY[x.level] for x in findings))
 

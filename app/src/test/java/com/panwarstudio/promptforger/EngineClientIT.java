@@ -80,6 +80,27 @@ class EngineClientIT {
                     "anything", List.of(), AiSettings.DEFAULT.withProvider("anthropic"), current).get(10, TimeUnit.SECONDS));
             assertInstanceOf(EngineException.class, err.getCause());
 
+            // v1.2: score breakdown, Enhance (offline) and reply rating.
+            assertEquals(5, s.quality().dimensions().size());
+            FormState weak = new FormState("assistant", "Write a payment reminder email to a client whose invoice is overdue.",
+                    "", "The client is a small shop. Never threaten legal action.", "", "", "", "", "", "",
+                    "standard", "claude-sonnet", "detailed", "100", "");
+            com.panwarstudio.promptforger.engine.EnhanceResult en = client.enhance(weak, AiSettings.DEFAULT).get(10, TimeUnit.SECONDS);
+            assertTrue(en.after() > en.before(), "enhance improves the score");
+            assertEquals("offline", en.source());
+            assertEquals("professional business writer", en.form().role());
+            assertTrue(en.changes().stream().anyMatch(c -> c.field().equals("constraints")));
+
+            FormState brief = new FormState("writer", "Reminder email", "", "", "Keep it under 120 words.", "Sounds friendly",
+                    "", "Subject: <subject>\n\n<body>", "", "", "standard", "claude-sonnet", "balanced", "", "");
+            com.panwarstudio.promptforger.engine.RateResult good = client.rate(brief,
+                    "Subject: Reminder\n\nHi Asha, invoice #77 is due Friday. Thanks!", AiSettings.DEFAULT).get(10, TimeUnit.SECONDS);
+            com.panwarstudio.promptforger.engine.RateResult poor = client.rate(brief, "PAY NOW ".repeat(200), AiSettings.DEFAULT)
+                    .get(10, TimeUnit.SECONDS);
+            assertEquals(Integer.valueOf(100), good.accuracy());
+            assertTrue(poor.accuracy() != null && poor.accuracy() < good.accuracy());
+            assertTrue(good.checks().stream().anyMatch(c -> c.passed() == null), "judgement checks stay unchecked offline");
+
             ForgeResult bad = client.forge(FormState.DEFAULT).get(10, TimeUnit.SECONDS);
             ForgeResult.Invalid inv = assertInstanceOf(ForgeResult.Invalid.class, bad);
             assertEquals("Role is required.", inv.errors().get("role"));

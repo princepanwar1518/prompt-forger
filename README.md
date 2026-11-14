@@ -21,6 +21,22 @@ The target model changes three things:
 - **Ralph runner CLI:** Claude Code, Codex CLI, Gemini CLI, or Aider.
 - **Subagent `model:` field** in agent profiles.
 
+## New in v1.2: rate and enhance
+
+- **Score breakdown.** Every prompt gets a 0–100 score plus five dimension bars: Clarity, Specificity, Structure, Checkability and Fit.
+- **✦ Enhance.** Runs offline fixes first:
+  - swaps a generic role for a specific one
+  - moves "never…" rules into Constraints
+  - makes success criteria measurable
+  - repairs the JSON schema
+  - sets a sensible token budget
+
+  If an AI provider is set, it also asks the AI to rewrite the prompt and keeps whichever version scores higher. You see the before → after score and every change, then **Apply** or **Discard**. It never rewrites your task text; anything only you can fill in is listed under "Needs you".
+- **Reply rating.** After **Test it**, the model's reply is checked against your success criteria and constraints. It gets an accuracy %, a verdict, and a ✓/✕ line for each check.
+  - **Automatic checks:** format, JSON keys, length limits and token budget.
+  - **AI-judged checks:** everything else, judged by the AI when a provider is set.
+  - **Unrated checks:** without a provider, these are marked "needs an AI judge" instead of being guessed.
+
 ## Architecture
 
 ```
@@ -50,7 +66,7 @@ The target model changes three things:
 ← {"id": 1, "result": {"ok": false, "errors": {"task": "Task is required."}}}
 ```
 
-The methods are `forge`, `meta`, `ping` and `shutdown`. Errors come back as `{"id", "error": {"code", "message"}}`.
+The methods are `forge`, `meta`, `ping`, `shutdown`, plus `describe`, `run`, `tokens`, `enhance` and `rate` (the slow ones run on a worker pool; responses are matched by id). Errors come back as `{"id", "error": {"code", "message"}}`.
 
 ## Folder structure
 

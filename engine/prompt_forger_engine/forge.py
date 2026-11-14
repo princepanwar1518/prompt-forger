@@ -10,7 +10,7 @@ from .formats.graph import forge_graph
 from .formats.ralph import forge_ralph
 from .formats.standard import forge_standard
 from .explain import explain
-from .lint import check, grade, score
+from .lint import check, dimensions, grade, score
 from .models import MODEL_PROFILES, ModelProfile
 from .output import ForgeFile
 from .schema import ForgeInput, ValidationError, validate
@@ -54,7 +54,8 @@ def forge(form: Any) -> dict[str, Any]:
         "ok": True,
         "files": [f.to_dict() for f in files],
         "warnings": _warnings(inp),
-        "quality": {"score": points, "grade": grade(points), "findings": [x.to_dict() for x in findings]},
+        "quality": {"score": points, "grade": grade(points), "findings": [x.to_dict() for x in findings],
+                    "dimensions": dimensions(inp, findings)},
         "explanation": explain(inp),
         "variables": list(inp.variables) + [v for v in inp.unresolved_variables if v not in inp.variables],
     }

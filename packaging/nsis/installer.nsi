@@ -3,7 +3,7 @@ Unicode true
 !include "MUI2.nsh"
 
 !define APP_NAME "Prompt Forger"
-!define APP_VERSION "1.1.0"
+!define APP_VERSION "1.2.0"
 !define PUBLISHER "Panwar Studio"
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\PromptForger"
 

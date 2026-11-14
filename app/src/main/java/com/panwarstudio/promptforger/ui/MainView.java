@@ -118,6 +118,11 @@ public final class MainView extends BorderPane {
             public void focusField(String field) {
                 form.focusField(field);
             }
+
+            @Override
+            public void enhance() {
+                enhancePrompt();
+            }
         });
 
         setTop(buildHeader());
@@ -157,7 +162,7 @@ public final class MainView extends BorderPane {
         dot.getStyleClass().add("wordmark-dot");
         Label title = new Label("Prompt Forger®");
         title.getStyleClass().add("wordmark");
-        Label version = new Label("v1.1");
+        Label version = new Label("v1.2");
         version.getStyleClass().add("version-pill");
 
         presetBox.setPromptText("Presets");
@@ -329,7 +334,23 @@ public final class MainView extends BorderPane {
         }
         String label = meta.providers().stream().filter(p -> p.id().equals(ai.provider())).findFirst()
                 .map(EngineMeta.Option::label).orElse(ai.provider());
-        Dialogs.test(getScene(), engine, ai, label, file.fileName(), file.content());
+        Dialogs.test(getScene(), engine, ai, label, file.fileName(), file.content(), form.read());
+    }
+
+    private void enhancePrompt() {
+        toast.show("rules".equals(ai.provider()) ? "Enhancing offline…" : "Enhancing with AI…", Toast.Tone.INFO);
+        engine.enhance(form.read(), ai).whenComplete((r, err) -> Platform.runLater(() -> {
+            if (err != null) {
+                String msg = Dialogs.rootMessage(err);
+                AppLog.get().info("enhance failed: " + msg);
+                error("Couldn't enhance the prompt", msg);
+                return;
+            }
+            if (Dialogs.enhance(getScene(), r)) {
+                form.write(r.form());
+                toast.show("Enhanced: score " + r.before() + " → " + r.after(), Toast.Tone.SUCCESS);
+            }
+        }));
     }
 
     private void openSettings() {
@@ -465,7 +486,7 @@ public final class MainView extends BorderPane {
         engine.ping().whenComplete((version, err) -> Platform.runLater(() -> {
             Alert a = new Alert(Alert.AlertType.INFORMATION);
             styleDialog(a, "About Prompt Forger");
-            a.setHeaderText(err == null ? "Prompt Forger 1.1 · engine v" + version : "Engine is not responding");
+            a.setHeaderText(err == null ? "Prompt Forger 1.2 · engine v" + version : "Engine is not responding");
             Path logs = AppLog.folder();
             a.setContentText(engine.describe() + "\n\nLogs: " + (logs == null ? "disabled" : logs));
             a.showAndWait();

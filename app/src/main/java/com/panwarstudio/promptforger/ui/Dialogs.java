@@ -3,6 +3,9 @@ package com.panwarstudio.promptforger.ui;
 import com.panwarstudio.promptforger.engine.AiSettings;
 import com.panwarstudio.promptforger.engine.EngineClient;
 import com.panwarstudio.promptforger.engine.EngineMeta.Option;
+import com.panwarstudio.promptforger.engine.EnhanceResult;
+import com.panwarstudio.promptforger.engine.RateResult;
+import com.panwarstudio.promptforger.model.FormState;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -174,7 +177,8 @@ final class Dialogs {
 
     // ------------------------------------------------------------------ test it
 
-    static void test(Scene owner, EngineClient engine, AiSettings ai, String providerLabel, String fileName, String prompt) {
+    static void test(Scene owner, EngineClient engine, AiSettings ai, String providerLabel, String fileName, String prompt,
+                     FormState form) {
         Dialog<Void> d = new Dialog<>();
         style(d, owner, "Test it");
         d.setHeaderText("Test " + fileName + " with " + providerLabel);
@@ -197,6 +201,7 @@ final class Dialogs {
         note.getStyleClass().add("hint");
         note.setWrapText(true);
 
+        VBox rating = new VBox(8);
         send.setOnAction(e -> {
             send.setDisable(true);
             spin.setVisible(true);
@@ -207,20 +212,158 @@ final class Dialogs {
                 spin.setVisible(false);
                 if (err != null) {
                     reply.setText("Couldn't run the test:\n" + rootMessage(err));
+                    rating.getChildren().clear();
                 } else {
                     reply.setText(text);
-                    note.setText(String.format("Reply in %.1f s from %s.", (System.nanoTime() - started) / 1e9, providerLabel));
+                    note.setText(String.format("Reply in %.1f s from %s. Rating it against your brief…",
+                            (System.nanoTime() - started) / 1e9, providerLabel));
+                    engine.rate(form, text, ai).whenComplete((r, rErr) -> Platform.runLater(() -> {
+                        if (rErr != null) {
+                            note.setText("Couldn't rate the reply: " + rootMessage(rErr));
+                        } else {
+                            showRating(rating, r);
+                            note.setText(String.format("Reply from %s. Rated by %s.", providerLabel,
+                                    "offline".equals(r.judge()) ? "automatic checks" : r.judge() + " + automatic checks"));
+                        }
+                    }));
                 }
             }));
         });
 
         HBox row = new HBox(8, input, spin, send);
         row.setAlignment(Pos.CENTER_LEFT);
-        VBox content = new VBox(12, row, reply, note);
-        content.setPrefWidth(720);
+        reply.setPrefRowCount(11);
+        javafx.scene.control.ScrollPane ratingScroll = new javafx.scene.control.ScrollPane(rating);
+        ratingScroll.setFitToWidth(true);
+        ratingScroll.setPrefViewportHeight(210);
+        VBox content = new VBox(12, row, reply, ratingScroll, note);
+        content.setPrefWidth(760);
         d.getDialogPane().setContent(content);
         d.getDialogPane().getButtonTypes().setAll(ButtonType.CLOSE);
         d.showAndWait();
+    }
+
+    /** Accuracy % and one pass / fail / not-checked line per check. */
+    static void showRating(VBox box, RateResult r) {
+        box.getChildren().clear();
+        Label eyebrow = new Label("REPLY RATING");
+        eyebrow.getStyleClass().add("eyebrow");
+        Label big = new Label(r.accuracy() == null ? "–" : r.accuracy() + "%");
+        big.getStyleClass().add("big-number");
+        Label verdict = new Label(r.verdict());
+        verdict.getStyleClass().add("card-title");
+        verdict.setWrapText(true);
+        Label meta = new Label(String.format("%d of %d checks passed · %d of %d could be checked%s",
+                r.passed(), r.checked(), r.checked(), r.total(),
+                "offline".equals(r.judge()) && r.checked() < r.total() ? " · pick an AI provider to check the rest" : ""));
+        meta.getStyleClass().add("hint");
+        meta.setWrapText(true);
+        VBox head = new VBox(2, eyebrow, verdict, meta);
+        HBox.setHgrow(head, javafx.scene.layout.Priority.ALWAYS);
+        HBox top = new HBox(18, big, head);
+        top.setAlignment(Pos.CENTER_LEFT);
+        VBox checks = new VBox(6);
+        for (RateResult.Check c : r.checks()) {
+            Label mark = new Label(c.passed() == null ? "○" : c.passed() ? "✓" : "✕");
+            mark.getStyleClass().add(c.passed() == null ? "check-skip" : c.passed() ? "check-pass" : "check-fail");
+            mark.setMinWidth(18);
+            Label text = new Label(c.item() + "  —  " + c.reason());
+            text.setWrapText(true);
+            text.getStyleClass().add("finding");
+            HBox line = new HBox(8, mark, text);
+            line.setAlignment(Pos.TOP_LEFT);
+            checks.getChildren().add(line);
+        }
+        if (!r.summary().isBlank()) {
+            Label sum = new Label(r.summary());
+            sum.getStyleClass().add("hint");
+            sum.setWrapText(true);
+            checks.getChildren().add(sum);
+        }
+        VBox card = new VBox(10, top, checks);
+        card.getStyleClass().add("accuracy-card");
+        box.getChildren().add(card);
+    }
+
+    // ------------------------------------------------------------------ enhance
+
+    /** Shows before/after scores and every change; returns true if the user applies them. */
+    static boolean enhance(Scene owner, EnhanceResult r) {
+        Dialog<ButtonType> d = new Dialog<>();
+        style(d, owner, "Enhance");
+        d.setHeaderText(r.changes().isEmpty() ? "Nothing to change" : "Review the improvements");
+
+        Label before = new Label(String.valueOf(r.before()));
+        before.getStyleClass().add("big-number");
+        Label arrow = new Label("→");
+        arrow.getStyleClass().add("arrow");
+        Label after = new Label(String.valueOf(r.after()));
+        after.getStyleClass().add("big-number");
+        String by = switch (r.source()) {
+            case "anthropic" -> "Rewritten by Claude, then checked offline";
+            case "openai" -> "Rewritten by OpenAI, then checked offline";
+            case "ollama" -> "Rewritten by Ollama, then checked offline";
+            default -> "Offline fixes (pick an AI provider for a full rewrite)";
+        };
+        Label source = new Label(by);
+        source.getStyleClass().add("hint");
+        VBox scoreText = new VBox(2, label("PROMPT SCORE", "eyebrow"), source);
+        HBox scores = new HBox(14, before, arrow, after, scoreText);
+        scores.setAlignment(Pos.CENTER_LEFT);
+
+        VBox list = new VBox(8);
+        for (EnhanceResult.Change c : r.changes()) {
+            Label field = label(fieldName(c.field()) + "  ·  " + c.action(), "change-field");
+            Label why = label(c.summary(), "finding");
+            why.setWrapText(true);
+            VBox row = new VBox(4, field, why);
+            if (!c.before().isBlank() && !"added".equals(c.action())) {
+                Label b = label(shorten(c.before()), "change-before");
+                b.setWrapText(true);
+                row.getChildren().add(b);
+            }
+            if (!c.after().isBlank()) {
+                Label a = label(shorten(c.after()), "change-after");
+                a.setWrapText(true);
+                row.getChildren().add(a);
+            }
+            row.getStyleClass().add("change-row");
+            list.getChildren().add(row);
+        }
+        if (r.changes().isEmpty()) list.getChildren().add(label("This prompt already passes every automatic check.", "finding"));
+        for (String n : r.needsYou()) {
+            Label l = label("Needs you: " + n, "warning");
+            l.setWrapText(true);
+            list.getChildren().add(l);
+        }
+        for (String n : r.notes()) {
+            Label l = label(n, "hint");
+            l.setWrapText(true);
+            list.getChildren().add(l);
+        }
+        javafx.scene.control.ScrollPane scroll = new javafx.scene.control.ScrollPane(list);
+        scroll.setFitToWidth(true);
+        scroll.setPrefViewportHeight(380);
+        VBox content = new VBox(14, scores, scroll);
+        content.setPrefWidth(660);
+        d.getDialogPane().setContent(content);
+
+        ButtonType apply = new ButtonType("Apply changes", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
+        ButtonType discard = new ButtonType("Discard", javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE);
+        d.getDialogPane().getButtonTypes().setAll(r.changes().isEmpty() ? List.of(ButtonType.CLOSE) : List.of(apply, discard));
+        if (!r.changes().isEmpty()) ((Button) d.getDialogPane().lookupButton(apply)).getStyleClass().add("primary");
+        return d.showAndWait().filter(b -> b == apply).isPresent();
+    }
+
+    private static Label label(String text, String style) {
+        Label l = new Label(text);
+        l.getStyleClass().add(style);
+        return l;
+    }
+
+    private static String shorten(String s) {
+        String flat = s.strip();
+        return flat.length() > 320 ? flat.substring(0, 317) + "…" : flat;
     }
 
     // ------------------------------------------------------------------ clarifying questions
@@ -258,5 +401,23 @@ final class Dialogs {
         });
         if (!answers.isEmpty()) Platform.runLater(() -> answers.getFirst().requestFocus());
         return d.showAndWait().filter(list -> !list.isEmpty());
+    }
+
+    private static String fieldName(String key) {
+        return switch (key) {
+            case "role" -> "ROLE";
+            case "task" -> "TASK";
+            case "steps" -> "STEPS";
+            case "context" -> "CONTEXT";
+            case "constraints" -> "CONSTRAINTS";
+            case "successCriteria" -> "SUCCESS CRITERIA";
+            case "examples" -> "EXAMPLES";
+            case "outputSchema" -> "OUTPUT SCHEMA";
+            case "variables" -> "VARIABLES";
+            case "tools" -> "TOOLS";
+            case "tokenBudget" -> "TOKEN BUDGET";
+            case "maxIterations" -> "MAX ITERATIONS";
+            default -> key.toUpperCase(java.util.Locale.ROOT);
+        };
     }
 }
